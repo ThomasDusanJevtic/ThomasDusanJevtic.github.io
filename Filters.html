@@ -1,0 +1,92 @@
+<html lang="en">
+  <head>
+    <title>Council Property Finder</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@600&family=Roboto:wght@500&display=swap">
+    <script src="script.js" defer></script>
+    <script>
+      function outputTable(json) {
+        let element = document.getElementById("results");
+        element.innerHTML = "";
+        let features = json.features;
+        for (i=0; i<features.length; i++) {
+          tr = document.createElement('tr');
+          let a = features[i].attributes;
+          let g = features[i].geometry;
+          let td = document.createElement('td');
+          td.innerHTML = a.PROPERTY_ADDRESS;
+          tr.appendChild(td);
+          td = document.createElement('td');
+          td.innerHTML = a.NUMBER_OF_BEDS;
+          tr.appendChild(td);
+          element.appendChild(tr);
+          
+          td = document.createElement('td');
+          td.innerHTML = a.DWELLING_TYPE;
+          tr.appendChild(td);
+          element.appendChild(tr);
+
+          td = document.createElement('td');
+          td.innerHTML = a.MANAGEMENT_AREA_CODE;
+          tr.appendChild(td);
+          element.appendChild(tr);
+
+        }
+      }
+
+      function filter(where) {
+        let urlEncoded = encodeURIComponent(where);
+        let url = `https://maps2.bristol.gov.uk/server2/rest/services/ext/ll_housing_and_property/MapServer/1/query?where=%20(NUMBER_OF_BEDS%20%3D%20'${urlEncoded}'%20OR%20NUMBER_OF_BEDS%20%3D%20'${urlEncoded}')%20&outFields=PROPERTY_ADDRESS,NUMBER_OF_BEDS,DWELLING_TYPE,MANAGEMENT_AREA_CODE,&outSR=4326&f=json`;
+        fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' } })
+        .then (response => response.json())
+        .then(outputTable);
+      }
+    </script>
+  </head>  
+  <body>
+    <div class="grid-container">
+      <header>
+        <span class="heading"><a href="Main page.html">Council Property Finder</a></span>
+        <form class="search" action="search.html">
+          <input name="searchterm" placeholder="Search.." type="text" />
+          <button type="submit"><i class="fa fa-search"></i></button>
+        </form>
+      </header>
+      <nav class="w3-container w3-margin">
+        <button onclick="getLocation('map.html')" class="w3-button w3-block w3-blue w3-margin-top">Find nearest Property</button>
+        <button onclick="location.href='Filters.html'" class="w3-button w3-block w3-blue w3-margin-top">Find by Number of Bedrooms</button>
+      </nav>
+      <main>
+        <div class="w3-bar">
+          <button class="w3-bar-item w3-button w3-ripple w3-green" onclick="filter('1')"
+          >1 Bedroom</button>
+          <button class="w3-bar-item w3-button w3-ripple w3-green" onclick="filter('2')"
+          >2 Bedrooms</button>
+          <button class="w3-bar-item w3-button w3-ripple w3-green" onclick="filter('3')"
+          >3 Bedrooms</button>
+          <button class="w3-bar-item w3-button w3-ripple w3-green" onclick="filter('4')"
+          >4 Bedrooms</button>
+          <button class="w3-bar-item w3-button w3-ripple w3-green" onclick="filter('5')"
+          >5 Bedrooms</button>
+          <button class="w3-bar-item w3-button w3-ripple w3-green" onclick="filter('6')"
+          >6 Bedrooms</button>
+          <button class="w3-bar-item w3-button w3-ripple w3-green" onclick="filter('7')"
+          >7 Bedrooms</button>
+        </div>
+        <table class="w3-table w3-bordered">
+          <thead>
+            <th>Address</th><th>Number of Beds</th><th>Dwelling Type</th><th>Management Area Code</th>
+          </thead>
+          <tbody id="results">
+          </tbody>
+        </table>
+        <script>
+          filter('1');
+        </script>
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Council Property Finder</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@600&family=Roboto:wght@500&display=swap">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js"></script>
+    <script src="script.js" defer></script>
+    <script>
+      function outputTable(json) {
+        let element = document.getElementById("results");
+        let features = json.features;
+        for (i=0; i<features.length; i++) {
+
+          tr = document.createElement('tr');
+          let a = features[i].attributes;
+          let td = document.createElement('td');
+          td.innerHTML = a.ANITE_UPRN;
+          tr.appendChild(td);
+
+          td = document.createElement('td');
+          td.innerHTML = a.PROPERTY_ADDRESS;
+          tr.appendChild(td);
+          element.appendChild(tr);
+
+          td = document.createElement('td');
+          td.innerHTML = a.DWELLING_TYPE;
+          tr.appendChild(td);
+          element.appendChild(tr);
+
+          td = document.createElement('td');
+          td.innerHTML = a.WARD;
+          tr.appendChild(td);
+          element.appendChild(tr);
+
+          td = document.createElement('td');
+          td.innerHTML = a.MANAGEMENT_AREA;
+          tr.appendChild(td);
+          element.appendChild(tr);
+
+          td = document.createElement('td');
+          td.innerHTML = a.REPAIRS_AREA;
+          tr.appendChild(td);
+          element.appendChild(tr);
+
+          td = document.createElement('td');
+          td.innerHTML = a.NUMBER_OF_BEDS;
+          tr.appendChild(td);
+          element.appendChild(tr);
+        }
+      }
+
+      function query() {
+        let url = "https://maps2.bristol.gov.uk/server2/rest/services/ext/ll_housing_and_property/MapServer/1/query?where=1%3D1&outFields=ANITE_UPRN,PROPERTY_ADDRESS,DWELLING_TYPE,WARD,MANAGEMENT_AREA,REPAIRS_AREA,NUMBER_OF_BEDS&outSR=4326&f=json";
+        fetch(url, {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' },
+        })
+        .then (response => response.json())
+        .then(outputTable);
+      }
+    </script>
+  </head>  
+  <body>
+    <div class="grid-container">
+      <header>
+        <span class="heading"><a href="Main page.html">Council Property Finder</a></span>
+        <form class="search" action="search.html">
+          <input name="searchterm" placeholder="Search.." type="text" />
+          <button type="submit"><i class="fa fa-search"></i></button>
+        </form>
+      </header>
+      <nav class="w3-container w3-margin">
+        <button onclick = "getLocation('map.html')" class="w3-button w3-block w3-blue w3-margin-top">Find nearest Property</button>
+        <button onclick="location.href='Filters.html'" class="w3-button w3-block w3-blue w3-margin-top">Find by Number of Bedrooms</button>
+      </nav>
+      <main>
+        <table class="w3-table w3-bordered">
+          <thead>
+            <th>Anite UPRN</th><th>Address</th><th>Dwelling Type</th><th>Ward</th><th>Management Area</th><th>Repairs Area</th><th>Number of Beds</th>
+          </thead>
+          <tbody id="results">
+          </tbody>
+        </table>
+        <script>query();</script>
+      </main>
+    </div>
+  </body>
+</html>

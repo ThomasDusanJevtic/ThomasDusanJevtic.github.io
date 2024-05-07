@@ -1,0 +1,89 @@
+<html lang="en">
+  <head>
+    <title>Council Property Finder</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@600&family=Roboto:wght@500&display=swap">
+    <script src="script.js" defer></script>
+    <script>
+      function outputTable(json) {
+        let element = document.getElementById("results");
+       
+        let features = json.features;
+        for (i=0; i<features.length; i++) {
+          tr = document.createElement('tr');
+          let a = features[i].attributes;
+          let td = document.createElement('td');
+          td.innerHTML = a.PROPERTY_ADDRESS;
+          tr.appendChild(td);
+
+          td = document.createElement('td');
+          td.innerHTML = a.DWELLING_TYPE;
+          tr.appendChild(td);
+          element.appendChild(tr);
+
+          td = document.createElement('td');
+          td.innerHTML = a.WARD;
+          tr.appendChild(td);
+          element.appendChild(tr);
+
+          td = document.createElement('td');
+          td.innerHTML = a.MANAGEMENT_AREA;
+          tr.appendChild(td);
+          element.appendChild(tr);
+
+          td = document.createElement('td');
+          td.innerHTML = a.REPAIRS_AREA;
+          tr.appendChild(td);
+          element.appendChild(tr);
+
+          td = document.createElement('td');
+          td.innerHTML = a.NUMBER_OF_BEDS;
+          tr.appendChild(td);
+          element.appendChild(tr);
+        }
+      }
+
+      function search(string) {
+        let urlEncoded = encodeURIComponent(string);
+        url = `https://maps2.bristol.gov.uk/server2/rest/services/ext/ll_housing_and_property/MapServer/1/query?where=&text=${urlEncoded}&objectIds=&time=&timeRelation=esriTimeRelationOverlaps&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=PROPERTY_ADDRESS%2C+DWELLING_TYPE%2C+WARD%2C+MANAGEMENT_AREA%2C+REPAIRS_AREA%2C+NUMBER_OF_BEDS&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&returnExtentOnly=false&sqlFormat=none&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=pjson`;
+        fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' }})
+        .then (response => response.json())
+        .then(outputTable);
+      }
+      
+    </script>
+  </head>  
+  <body>
+    <div class="grid-container">
+      <header>
+        <span class="heading"><a href="Main Page.html">Council Property Finder</a></span>
+        <form class="search" action="search.html">
+          <input name="searchterm" placeholder="Search.." type="text">
+          <button type="submit"><i class="fa fa-search"></i></button>
+        </form>
+      </header>
+      <nav class="w3-container w3-margin">
+        <button onclick="getLocation('map.html')" class="w3-button w3-block w3-blue w3-margin-top">Find nearest Property</button>
+        <button onclick="location.href='Filters.html'" class="w3-button w3-block w3-blue w3-margin-top">Find by Number of Bedrooms</button>
+      </nav>
+      <main>
+        <table class="w3-table w3-bordered">
+          <thead>
+            <tr><th>Address</th><th>Dwelling Type</th><th>Ward</th><th>Management Area</th><th>Repairs Area</th><th>Number of Beds</th></tr>
+          </thead>
+          <tbody id="results">
+          </tbody>
+        </table>
+        <script>
+          // get query string with searchterm
+          var urlParams = new URLSearchParams(location.search);
+          var searchterm = urlParams.get('searchterm');
+          search(searchterm);
+        </script>
+      </main>
+    </div>
+  </body>
+</html>
